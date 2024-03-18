@@ -1,0 +1,124 @@
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.RestructInvExtraTable.Start
+	'Check if table has the new columns.  
+	v.Local.iRet.Declare(string,"")
+	v.Local.bColFound.Declare(boolean,False)
+	v.Local.iCol.Declare(long,61)
+	v.Local.sCol.Declare(string)
+	v.Local.sSQL.Declare(string,"CREATE TABLE INV_EXTRA (PART CHAR(20) NOT NULL,REV CHAR(3) NOT NULL,LOCATION CHAR(2) NOT NULL,USER1 CHAR(30) NOT NULL,USER2 CHAR(30) NOT NULL,USER3 CHAR(30) NOT NULL,USER4 CHAR(30) NOT NULL,USER5 CHAR(30) NOT NULL,USER6 CHAR(30) NOT NULL,USER7 CHAR(30) NOT NULL,USER8 CHAR(30) NOT NULL,USER9 CHAR(30) NOT NULL,USER10 CHAR(30) NOT NULL,USER11 CHAR(30) NOT NULL,USER12 CHAR(30) NOT NULL,USER13 CHAR(30) NOT NULL,USER14 CHAR(30) NOT NULL,USER15 CHAR(30) NOT NULL,USER16 CHAR(30) NOT NULL,USER17 CHAR(30) NOT NULL,USER18 CHAR(30) NOT NULL,USER19 CHAR(30) NOT NULL,USER20 CHAR(30) NOT NULL,USER21 CHAR(30) NOT NULL,USER22 CHAR(30) NOT NULL,USER23 CHAR(30) NOT NULL,USER24 CHAR(30) NOT NULL,USER25 CHAR(30) NOT NULL,USER26 CHAR(30) NOT NULL,USER27 CHAR(30) NOT NULL,USER28 CHAR(30) NOT NULL,USER29 CHAR(30) NOT NULL,USER30 CHAR(30) NOT NULL,USER31 CHAR(30) NOT NULL,USER32 CHAR(30) NOT NULL,USER33 CHAR(30) NOT NULL,USER34 CHAR(30) NOT NULL,USER35 CHAR(30) NOT NULL,USER36 CHAR(30) NOT NULL,USER37 CHAR(30) NOT NULL,USER38 CHAR(30) NOT NULL,USER39 CHAR(30) NOT NULL,USER40 CHAR(30) NOT NULL,USER41 CHAR(30) NOT NULL,USER42 CHAR(30) NOT NULL,USER43 CHAR(30) NOT NULL,USER44 CHAR(30) NOT NULL,USER45 CHAR(30) NOT NULL,USER46 CHAR(30) NOT NULL,USER47 CHAR(30) NOT NULL,USER48 CHAR(30) NOT NULL,USER49 CHAR(30) NOT NULL,USER50 CHAR(30) NOT NULL,USER51 CHAR(30) NOT NULL,USER52 CHAR(30) NOT NULL,USER53 CHAR(30) NOT NULL,USER54 CHAR(30) NOT NULL,USER55 CHAR(30) NOT NULL,USER56 CHAR(30) NOT NULL,USER57 CHAR(30) NOT NULL,USER58 CHAR(30) NOT NULL,USER59 CHAR(30),USER60 CHAR(30)")
+	v.Local.bExists.Declare(boolean)
+	v.Local.sSQLTemp.Declare(string)
+	
+	f.ODBC.Connection!con.opencompanyconnection(600)
+	f.Intrinsic.Control.Try
+		f.ODBC.Connection!con.executeandreturn("select user61 from inv_extra",v.Local.sCol)
+		v.Local.bColFound.Set(True)
+	f.Intrinsic.Control.Catch
+		'bColFound will remain False
+	f.Intrinsic.Control.EndTry
+	
+	f.Intrinsic.Control.If(v.Local.bColFound,=,False)
+		f.Intrinsic.Control.Try
+		
+		'Make sure tables exist
+		f.ODBC.Connection!con.tableexists("INV_EXTRA",v.Local.bExists)
+		f.Intrinsic.Control.If(v.Local.bExists,=,False)
+			f.Intrinsic.String.Build("{0});",v.Local.sSQL,v.Local.sSQLTemp)
+			f.ODBC.Connection!con.execute(v.Local.sSQLTemp)
+		f.Intrinsic.Control.EndIf
+		
+		'Get data from tables
+		f.Data.DataTable.CreateFromSQL("dtInvExtra","con","select * from inv_extra")
+		
+		'drop the tables
+		f.ODBC.Connection!con.execute("drop table inv_extra")
+		
+		'add new columns to the datatables
+		f.Intrinsic.Control.For(v.Local.iCol,61,70,1)
+			f.Intrinsic.String.Build("USER{0}",v.Local.iCol,v.Local.sCol)
+			f.Data.DataTable.AddColumn("dtInvExtra",v.Local.sCol,"string")
+			f.Intrinsic.String.Build("{0},USER{1} CHAR(30) NOT NULL",v.Local.sSQL,v.Local.iCol,v.Local.sSQL)
+		f.Intrinsic.Control.Next(v.Local.iCol)
+		
+		'recreate the tables with the new columns
+		f.Intrinsic.String.Build("{0});",v.Local.sSQL,v.Local.sSQL)
+		f.ODBC.Connection!con.execute(v.Local.sSQL)
+		
+		'then save the data
+		f.Data.DataTable.SaveToDB("dtInvExtra","con","INV_EXTRA","PART*!*REV*!*LOCATION",128)
+		
+		f.ODBC.Connection!con.Close
+		f.Intrinsic.Control.Catch
+			f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+		f.Intrinsic.Control.EndTry
+	f.Intrinsic.Control.EndIf
+Program.Sub.RestructInvExtraTable.End
+
+Program.Sub.RestructInvExtraTitlesTable.Start
+	'Check if table has the new columns.  
+	v.Local.iRet.Declare(string,"")
+	v.Local.bColFound.Declare(boolean,False)
+	v.Local.iCol.Declare(long,61)
+	v.Local.sCol.Declare(string)
+	v.Local.sSQL2.Declare(string, "CREATE TABLE INV_EXTRA_TITLES (USER1 CHAR(30) NOT NULL,USER2 CHAR(30) NOT NULL,USER3 CHAR(30) NOT NULL,USER4 CHAR(30) NOT NULL,USER5 CHAR(30) NOT NULL,USER6 CHAR(30) NOT NULL,USER7 CHAR(30) NOT NULL,USER8 CHAR(30) NOT NULL,USER9 CHAR(30) NOT NULL,USER10 CHAR(30) NOT NULL,USER11 CHAR(30) NOT NULL,USER12 CHAR(30) NOT NULL,USER13 CHAR(30) NOT NULL,USER14 CHAR(30) NOT NULL,USER15 CHAR(30) NOT NULL,USER16 CHAR(30) NOT NULL,USER17 CHAR(30) NOT NULL,USER18 CHAR(30) NOT NULL,USER19 CHAR(30) NOT NULL,USER20 CHAR(30) NOT NULL,USER21 CHAR(30) NOT NULL,USER22 CHAR(30) NOT NULL,USER23 CHAR(30) NOT NULL,USER24 CHAR(30) NOT NULL,USER25 CHAR(30) NOT NULL,USER26 CHAR(30) NOT NULL,USER27 CHAR(30) NOT NULL,USER28 CHAR(30) NOT NULL,USER29 CHAR(30) NOT NULL,USER30 CHAR(30) NOT NULL,USER31 CHAR(30) NOT NULL,USER32 CHAR(30) NOT NULL,USER33 CHAR(30) NOT NULL,USER34 CHAR(30) NOT NULL,USER35 CHAR(30) NOT NULL,USER36 CHAR(30) NOT NULL,USER37 CHAR(30) NOT NULL,USER38 CHAR(30) NOT NULL,USER39 CHAR(30) NOT NULL,USER40 CHAR(30) NOT NULL,USER41 CHAR(30) NOT NULL,USER42 CHAR(30) NOT NULL,USER43 CHAR(30) NOT NULL,USER44 CHAR(30) NOT NULL,USER45 CHAR(30) NOT NULL,USER46 CHAR(30) NOT NULL,USER47 CHAR(30) NOT NULL,USER48 CHAR(30) NOT NULL,USER49 CHAR(30) NOT NULL,USER50 CHAR(30) NOT NULL,USER51 CHAR(30) NOT NULL,USER52 CHAR(30) NOT NULL,USER53 CHAR(30) NOT NULL,USER54 CHAR(30) NOT NULL,USER55 CHAR(30) NOT NULL,USER56 CHAR(30) NOT NULL,USER57 CHAR(30) NOT NULL,USER58 CHAR(30) NOT NULL,USER59 CHAR(30) NOT NULL,USER60 CHAR(30) NOT NULL")
+	v.Local.bExists.Declare(boolean)
+	v.Local.sSQLTemp.Declare(string)
+	
+	f.ODBC.Connection!con.opencompanyconnection(600)
+	f.Intrinsic.Control.Try
+		f.ODBC.Connection!con.executeandreturn("select user61 from inv_extra_titles",v.Local.sCol)
+		v.Local.bColFound.Set(True)
+	f.Intrinsic.Control.Catch
+		'bColFound will remain False
+	f.Intrinsic.Control.EndTry
+	
+	f.Intrinsic.Control.If(v.Local.bColFound,=,False)
+		f.Intrinsic.Control.Try
+		
+		'Make sure tables exist		
+		f.ODBC.Connection!con.tableexists("INV_EXTRA_TITLES",v.Local.bExists)
+		f.Intrinsic.Control.If(v.Local.bExists,=,False)
+			f.Intrinsic.String.Build("{0});",v.Local.sSQL2,v.Local.sSQLTemp)
+			f.ODBC.Connection!con.execute(v.Local.sSQLTemp)
+		f.Intrinsic.Control.EndIf
+		
+		'Get data from tables
+		f.Data.DataTable.CreateFromSQL("dtInvExtraTitles","con","select * from inv_extra_titles")
+		
+		'drop the tables
+		f.ODBC.Connection!con.execute("drop table inv_extra_titles")
+		
+		'add new columns to the datatables
+		f.Intrinsic.Control.For(v.Local.iCol,61,70,1)
+			f.Intrinsic.String.Build("USER{0}",v.Local.iCol,v.Local.sCol)
+			f.Data.DataTable.AddColumn("dtInvExtraTitles",v.Local.sCol,"string")
+			f.Intrinsic.String.Build("{0},USER{1} CHAR(30) NOT NULL",v.Local.sSQL2,v.Local.iCol,v.Local.sSQL2)
+		f.Intrinsic.Control.Next(v.Local.iCol)
+		
+		'recreate the tables with the new columns
+		f.Intrinsic.String.Build("{0});",v.Local.sSQL2,v.Local.sSQL2)
+		f.ODBC.Connection!con.execute(v.Local.sSQL2)
+		
+		'then save the data
+		f.Data.DataTable.SaveToDB("dtInvExtraTitles","con","INV_EXTRA_TITLES","",128)
+		
+		f.Intrinsic.Control.Catch
+			f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+		f.Intrinsic.Control.EndTry
+	f.Intrinsic.Control.EndIf
+Program.Sub.RestructInvExtraTitlesTable.End
+
+Program.Sub.ErrorMsg.Start
+v.Local.sError.Declare
+
+'Closes ODBC connection, default to connection : "con"
+f.Intrinsic.Control.If(v.ODBC!con.State, =, 1)
+	f.ODBC.Connection!con.Close
+f.Intrinsic.Control.EndIf
+
+'Generic Error message.
+f.Intrinsic.String.Build("Project GCG_6188_RestructTables.g2u {0}{0}Subroutine: {1}{0}Error: {2} with Description: {3}", v.Ambient.NewLine, v.Args.CurrentSub, v.Ambient.ErrorNumber, v.Ambient.ErrorDescription, v.Local.sError)
+f.Intrinsic.UI.Msgbox(v.Local.sError)
+Program.Sub.ErrorMsg.End
